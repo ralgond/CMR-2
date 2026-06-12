@@ -24,22 +24,26 @@ Output JSON schema:
     "pos_tags": [],
     "pos_artists": [],
     "pos_tracks": [],
+    "pos_album": [],
     
     "neg_tags": [],
     "neg_artists": [],
     "neg_tracks": [],
+
+    "album_cover_act": ""
 }
 
 Field rules:
 
 pos_artists: artists the user explicitly praised ("I love X", "from X", "more from X", "X is great").
+pos_album: album the user explicitly mention ("album X").
 pos_tracks: track UUIDs from music turns where the next user message was clearly positive.
 pos_tags: styles/genres/moods/era/vibe the user said they want ("slow", "vocals", "jazzy", "80s", "2000s", "calming").
 neg_artists: artists the user explicitly rejected ("not this artist", "heard enough from X", "no more X").
 neg_tracks: track UUIDs (36-char strings) from music turns that the user rejected.
 neg_tags: styles/genres/moods/vibe the user said they don't want ("not too slow", "no vocals", "not jazzy", "not calming").
 turn_op: debug information show how to merge output of N-1 and N.
-
+album_cover_act: cover act user explicitly mention("album with cover art X").
 
 Only output valid JSON, no explanation, no markdown.
 '''
