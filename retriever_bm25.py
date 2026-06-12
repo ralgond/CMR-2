@@ -40,6 +40,10 @@ def get_all_test():
         for tag in tags:
             tmp_tags = tn(tag)
             tags_norm.extend(tmp_tags)
+            # 切开phrase
+            # for _tag in tmp_tags:
+            #     if ' ' in _tag:
+            #         norm_tags.extend(_tag.split())
     
         doc = track_name + artist_name + album_name + tags_norm
         doc_l.append(doc)

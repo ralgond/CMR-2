@@ -58,10 +58,14 @@ for session_id, user_id, user_profile, session_data in tqdm(
     for tag in intent_result['pos_tags']:
         _l = tn(tag)
         norm_tags.extend(_l)
+        # phrase 也切开提高召回质量
+        # for _tag in _l:
+        #     if ' ' in _tag:
+        #         norm_tags.extend(_tag.split())
 
     # norm_tags.append(user_profile['age_group'])
     norm_tags.extend(tn(user_profile['preferred_language']))
-    norm_tags.extend(tn(user_profile['preferred_musical_culture']))
+    norm_tags.extend(user_profile['preferred_musical_culture'].lower().split())
 
     bm25_query.extend(norm_tags)
 
