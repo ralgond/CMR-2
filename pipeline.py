@@ -53,6 +53,8 @@ for session_id, user_id, user_profile, session_data in tqdm(
     bm25_query = []
     for artist in intent_result['pos_artists']:
         bm25_query.append(artist)
+        bm25_query.append(artist)
+        bm25_query.append(artist)
 
     norm_tags = []
     for tag in intent_result['pos_tags']:
