@@ -60,4 +60,22 @@ def debug_tag_normalization():
     for tag,cnt in l:
         print(tag,"\t",cnt)
 
-debug_tag_normalization()
+def debug_track_meta_print_dance_and_feel_good():
+    d = defaultdict(int)
+    df = pd.read_parquet('data/Track-Metadata/test_tracks-00000-of-00001.parquet')
+    print(df.columns)
+    tag_list_l = df['tag_list'].tolist()
+    track_name_l = df['track_name'].tolist()
+
+    l2 = []
+    for track_name, tag_list in zip(track_name_l, tag_list_l):
+        for tag in tag_list:
+            if tag == 'dance':
+                l2.append([track_name, tag_list])
+
+    for track_name, tag_list in l2:
+        for tag in tag_list:
+            if tag == 'feel good':
+                print(track_name, tag_list)
+
+debug_track_meta_print_dance_and_feel_good()

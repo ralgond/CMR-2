@@ -4,9 +4,13 @@ import numpy as np
 import json
 from tqdm import tqdm
 from intent_parser import IntentParser
-from retriever_bm25 import BM25Retriever, get_all_test
+from retriever_bm25 import BM25Retriever
+from retriever_dense import DenseRetriever
+from retriever_tagoverlap import TagOverlapRetriever
+from data_loader import get_all_test
 from tag_norm import TagNormalization
 from filter import Filter
+from utils import weighted_rrf
 
 def load_test_user_cf_bpr():
     df1 = pd.read_parquet('data/User-Embedding/test_cold-00000-of-00001.parquet')
@@ -33,10 +37,13 @@ def load_test_track_cf_bpr():
 track_cf_bpr_d = load_test_track_cf_bpr()
 
 
-
 all_uuid_l, all_doc_l = get_all_test()
 
 all_bm25_retriever = BM25Retriever(all_uuid_l, all_doc_l)
+
+# dense_retriever = DenseRetriever(all_uuid_l, all_doc_l)
+
+all_tag_retriever = TagOverlapRetriever(all_uuid_l, all_doc_l)
 
 tn = TagNormalization()
 ip = IntentParser()
@@ -72,11 +79,37 @@ for session_id, user_id, user_profile, session_data in tqdm(
     bm25_query.extend(norm_tags)
 
     # 检索
-    uuid_l, doc_l = all_bm25_retriever.get_similar_track(bm25_query, top_k=200)
-    print(f"[BM25] retrieved {len(uuid_l)}.")
+    bm25_uuid_l, _ = all_bm25_retriever.get_similar_track(bm25_query, top_k=100)
+    print(f"[BM25] retrieved {len(bm25_uuid_l)}.")
+
+    dense_query = f'''
+    [language]
+    {user_profile['preferred_language']}
+
+    [preferred_musical_culture]
+    {user_profile['preferred_musical_culture']}
+
+    [query]
+    {intent_result['query_by_llm']}
+    '''
+    
+    # dense_uuid_l, dense_doc_l = dense_retriever.get_similar_track(dense_query, top_k=100)
+    dense_uuid_l = []
+    print(f"[Dense] retrieved {len(dense_uuid_l)}.")
+
+    tag_uuid_l = all_tag_retriever.get_result(list(set(bm25_query)))
+    print(f"[Tag] retrieved {len(tag_uuid_l)}.")
+    
+    final_uuid_l = weighted_rrf([bm25_uuid_l, dense_uuid_l, tag_uuid_l], [0., 0., 1.0])
+    final_doc_l = []
+    for final_uuid in final_uuid_l:
+        for uuid, doc in zip(all_uuid_l, all_doc_l):
+            if uuid == final_uuid:
+                final_doc_l.append(doc)
+                break
 
     # 组建filter
-    filter = Filter(uuid_l, doc_l)
+    filter = Filter(final_uuid_l, final_doc_l)
     uuid_l2, doc_l2 = filter.filter_in_match(intent_result['neg_artists'])
     print(f"[Filter.filter_in_match] left {len(uuid_l2)}.")
 

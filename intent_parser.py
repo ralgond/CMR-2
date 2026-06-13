@@ -30,7 +30,9 @@ Output JSON schema:
     "neg_artists": [],
     "neg_tracks": [],
 
-    "album_cover_act": ""
+    "album_cover_act": "",
+
+    "query_by_llm": ""
 }
 
 Field rules:
@@ -44,6 +46,7 @@ neg_tracks: track UUIDs (36-char strings) from music turns that the user rejecte
 neg_tags: styles/genres/moods/vibe the user said they don't want ("not too slow", "no vocals", "not jazzy", "not calming").
 turn_op: debug information show how to merge output of N-1 and N.
 album_cover_act: cover act user explicitly mention("album with cover art X").
+query_by_llm: a natural language sentence generate by LLM according to pos_* fields and album_cover_act field.
 
 Only output valid JSON, no explanation, no markdown.
 '''
