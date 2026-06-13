@@ -9,7 +9,7 @@ from reranker import Reranker
 class DenseRetriever:
     def __init__(self, uuid_l, doc_l):
         self.qwen_embedder = QwenEmbedder()
-        self.reranker = Reranker()
+        # self.reranker = Reranker()
         
         self.uuid_l = uuid_l
         self.doc_l = doc_l
@@ -76,7 +76,7 @@ class DenseRetriever:
         for id in sorted_lyrics_ids:
             lyrics_uuid_l.append(track_id_l[self.lyrics_1024_idx[id]])
 
-        res_uuid_l = weighted_rrf([attr_uuid_l, meta_uuid_l, lyrics_uuid_l], [0.35, 0.35, 0.3])
+        res_uuid_l = weighted_rrf([attr_uuid_l, meta_uuid_l, lyrics_uuid_l], [0.1, 0.8, 0.1])
 
         res_doc_l = []
         for uuid, doc in zip(self.uuid_l, self.doc_l):
